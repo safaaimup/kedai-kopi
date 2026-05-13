@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout - Kedai Kopi Cozy</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-light">
+    <nav class="navbar navbar-light bg-white shadow-sm">
+      <div class="container">
+        <span class="navbar-brand fw-bold"> ☕ Kedai Kopi Cozy </span>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <button
+        onclick="window.location.href = 'about.html'"
+        class="btn btn-secondary"
+      >
+        ⬅ Kembali ke Menu
+      </button>
+    </div>
+
+    <section class="py-5">
+      <div class="container">
+        <h2 class="fw-bold text-center mb-5">Checkout Pesanan</h2>
+
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4">
+              <h4 class="mb-4">Detail Pesanan</h4>
+
+              <ul id="checkout-list" class="list-group mb-4"></ul>
+
+              <div class="d-flex justify-content-between mb-4 border-top pt-3">
+                <h5 class="fw-bold">Total Pembayaran</h5>
+                <h5 class="text-success fw-bold">
+                  Rp <span id="checkout-total">0</span>
+                </h5>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Nama Pemesan</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nama"
+                  placeholder="Masukkan nama"
+                />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Nomor HP</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="nomor"
+                  placeholder="Masukkan nomor HP"
+                />
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label">Metode Pembayaran</label>
+                <select class="form-select" id="payment">
+                  <option>Cash</option>
+                  <option>QRIS</option>
+                  <option>DANA</option>
+                  <option>OVO</option>
+                  <option>GoPay</option>
+                </select>
+              </div>
+
+              <button
+                class="btn btn-success w-100 py-2 fw-bold"
+                onclick="payNow()"
+              >
+                Bayar Sekarang
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      function loadCheckoutData() {
+        console.log("Mengecek LocalStorage..."); // Pesan tes
+
+        const dataSimpanan = localStorage.getItem("cart");
+        console.log("Data ditemukan:", dataSimpanan); // Pesan tes
+
+        const cart = JSON.parse(dataSimpanan) || [];
+        const listElement = document.getElementById("checkout-list");
+        const totalElement = document.getElementById("checkout-total");
+
+        let totalHarga = 0;
+        listElement.innerHTML = "";
+
+        if (cart.length === 0) {
+          console.warn("Keranjang kosong di LocalStorage!");
+          listElement.innerHTML = `<li class="list-group-item text-center text-muted">Keranjang masih kosong</li>`;
+          totalElement.innerText = "0";
+        } else {
+          cart.forEach((item) => {
+            totalHarga += item.price;
+            listElement.innerHTML += `
+          <li class="list-group-item d-flex justify-content-between">
+            <span>${item.name}</span>
+            <span class="fw-bold">Rp ${item.price.toLocaleString("id-ID")}</span>
+          </li>`;
+          });
+          totalElement.innerText = totalHarga.toLocaleString("id-ID");
+        }
+      }
+
+      function payNow() {
+        const nama = document.getElementById("nama").value;
+        const nomor = document.getElementById("nomor").value;
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        if (!nama || !nomor) {
+          alert("Lengkapi data diri kamu!");
+          return;
+        }
+
+        if (cart.length === 0) {
+          alert("Keranjang kosong!");
+          return;
+        }
+
+        alert("Pembayaran berhasil untuk " + nama);
+        localStorage.removeItem("cart");
+        window.location.href = "menu.html";
+      }
+
+      // Coba jalankan 2 kali agar mantap
+      window.onload = loadCheckoutData;
+      document.addEventListener("DOMContentLoaded", loadCheckoutData);
+    </script>
+  </body>
+</html>
